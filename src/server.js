@@ -24,6 +24,19 @@ function seed() {
       { id: "P004", name: "Toor Dal", brand: "Tata Sampann", unit: "kg", price: 138, stock: 35 },
     ]);
   }
+  if (readAll("customers_default", []).length === 0) {
+    writeAll("customers_default", [
+      { id: "C001", name: "Priya Anand", phone: "+91 90031 22456", locality: "Chokkikulam, Madurai", ltv: 12450, khata: 1200, type: "Retail" },
+      { id: "C002", name: "Karthik Raja", phone: "+91 98402 11099", locality: "KK Nagar, Madurai", ltv: 34800, khata: 0, type: "Wholesale" },
+      { id: "C003", name: "Srinivasan", phone: "+91 94432 78000", locality: "Simmakkal, Madurai", ltv: 8900, khata: 450, type: "Retail" },
+    ]);
+  }
+  if (readAll("orders_default", []).length === 0) {
+    writeAll("orders_default", [
+      { id: "ORD-928490", customer: "Priya Anand", phone: "+91 90031 22456", items: [{ n: "Ponni Rice", q: "2 kg", p: 116 }, { n: "Sugar", q: "1 kg", p: 44 }], total: 160, status: "Delivered", source: "AI Call", time: "10:30 AM", delivery: "Delivery" },
+      { id: "ORD-928491", customer: "Karthik Raja", phone: "+91 98402 11099", items: [{ n: "Sunflower Oil", q: "5 litre", p: 760 }], total: 760, status: "Confirmed", source: "WhatsApp", time: "11:15 AM", delivery: "Pickup" },
+    ]);
+  }
 }
 seed();
 
