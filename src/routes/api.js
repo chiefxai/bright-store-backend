@@ -177,7 +177,11 @@ apiRouter.post("/twilio/call", async (req, res) => {
     const client = twilio(accountSid, authToken);
     let callbackUrl;
     if (process.env.PUBLIC_BASE_URL) {
-      callbackUrl = `${process.env.PUBLIC_BASE_URL}/voice/incoming?outbound=true`;
+      let baseUrl = process.env.PUBLIC_BASE_URL.trim();
+      if (!baseUrl.startsWith("http://") && !baseUrl.startsWith("https://")) {
+        baseUrl = `https://${baseUrl}`;
+      }
+      callbackUrl = `${baseUrl}/voice/incoming?outbound=true`;
     } else {
       const host = req.get("host");
       const protocol = req.secure || req.headers["x-forwarded-proto"] === "https" ? "https" : "http";
