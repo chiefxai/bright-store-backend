@@ -58,9 +58,54 @@ apiRouter.patch("/catalog/:id", (req, res) => {
 });
 
 // ── Customers ────────────────────────────────────────────
-apiRouter.get("/customers", (req, res) => res.json(readAll(`customers_${shopId(req)}`, [])));
-apiRouter.get("/customers/:id", (req, res) => {
-  const c = readAll(`customers_${shopId(req)}`, []).find((x) => x.id === req.params.id);
+apiRouter.get("/customers", async (req, res) => {
+  const sId = shopId(req);
+  if (supabase) {
+    try {
+      const { data, error } = await supabase.from("customers").select("*");
+      if (!error && data) return res.json(data);
+    } catch (e) {
+      console.error("Supabase select error:", e.message);
+    }
+  }
+  res.json(readAll(`customers_${sId}`, []));
+});
+
+apiRouter.post("/customers", async (req, res) => {
+  const sId = shopId(req);
+  const newCust = {
+    id: `C-${Date.now().toString().slice(-6)}`,
+    khata: Number(req.body.khata || 0),
+    ltv: Number(req.body.ltv || 0),
+    created_at: new Date().toISOString(),
+    ...req.body,
+  };
+
+  append(`customers_${sId}`, newCust);
+
+  if (supabase) {
+    try {
+      const { error } = await supabase.from("customers").insert(newCust);
+      if (error) console.error("Supabase customer insert error:", error.message);
+    } catch (e) {
+      console.error("Supabase customer insert failed:", e.message);
+    }
+  }
+
+  res.status(201).json(newCust);
+});
+
+apiRouter.get("/customers/:id", async (req, res) => {
+  const sId = shopId(req);
+  if (supabase) {
+    try {
+      const { data, error } = await supabase.from("customers").select("*").eq("id", req.params.id).single();
+      if (!error && data) return res.json(data);
+    } catch (e) {
+      console.error("Supabase single customer error:", e.message);
+    }
+  }
+  const c = readAll(`customers_${sId}`, []).find((x) => x.id === req.params.id);
   return c ? res.json(c) : res.sendStatus(404);
 });
 
