@@ -174,6 +174,7 @@ export function openLiveSession({ shopId = "default", callerNumber, onAudioOut, 
   });
 
   ws.on("error", (err) => console.error("[GeminiLive] socket error:", err.message));
+  ws.on("close", (code, reason) => console.log(`[GeminiLive] socket closed: ${code} - ${reason.toString()}`));
 
   return {
     sendAudioChunk(base64Pcm16kMono) {
